@@ -1,3 +1,5 @@
+Affine arithmetic library with some examples.
+
   include/: exported libaffine header files
 libaffine/: libaffine source files
     tests/: correctness/regression tests
