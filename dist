@@ -4,9 +4,9 @@ set -e
 ./bootstrap
 
 wd=`pwd`
-revision=`tla revisions | tail -1 | cut -d- -f2`
-version=affine-0.2.$revision
+revision=`git rev-list --count HEAD`
+version=affine-0.3.$revision
 cd /tmp
-ln -nsf $wd $version
-tar c --exclude='.arch-ids' --exclude='{arch}' -h -z -f $version.tar.gz $version
-rm -f $version
+ln -nsf "$wd" "$version"
+tar c --exclude=.git -h -z -f "$version.tar.gz" "$version"
+rm -f "$version"

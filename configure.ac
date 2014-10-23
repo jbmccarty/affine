@@ -17,8 +17,8 @@ AC_LANG([C++])
 USE_ROUNDING=no
 LIST_TYPE="palist"
 REAL_TYPE="double"
-if which tla &>/dev/null && test -d $srcdir/'{arch}' ; then
-  REVISION='".'`tla logs | tail -1 | cut -d- -f2`'"'
+if which git &>/dev/null && test -d "$srcdir"/.git ; then
+  REVISION='".'`git rev-list --count HEAD`'"'
 else
   REVISION='""'
 fi
