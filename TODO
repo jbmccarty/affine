@@ -1,10 +1,10 @@
 Roadmap:
-  0.3: Implement rounding control completely. Hopefully use more
+  0.4: Implement rounding control completely. Hopefully use more
        conditional compilation for rounding and such.
-  0.4: Add more functions. Make better use of autoconf and automake,
+  0.5: Add more functions. Make better use of autoconf and automake,
        enabling libaffine to be easily distributable.
-  0.5: Complete work on implicit grapher.
-  0.6: Improve ComplexAffine.
+  0.6: Complete work on implicit grapher.
+  0.7: Improve ComplexAffine.
 
 Ideas:
 
