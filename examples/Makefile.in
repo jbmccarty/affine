@@ -1,0 +1,27 @@
+SUBDIRS = implicit-affine
+PROGRAMS = aadc implicit-aadc implicit-interval
+PROGOBJS = $(addsuffix .o,$(PROGRAMS))
+
+all: $(PROGRAMS) $(SUBDIRS)
+strip: all
+	strip -s -R .comment -R .note $(PROGRAMS)
+dist-clean: clean
+	@rm -f $(PROGRAMS) libstamp
+clean:
+	@rm -f $(PROGOBJS)
+
+%.d: @srcdir@/%.cpp
+	@set -e; $(CXX) -MM $(CFLAGS) $< 2> /dev/null | sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; [ -s $@ ] || rm -f $@
+
+-include $(PROGOBJS:.o=.d)
+
+$(SUBDIRS): libstamp
+	$(MAKE) -C $@
+
+$(PROGRAMS): %: %.o libstamp
+	$(CXX) $< $(LDFLAGS) -laffine -o $@
+
+$(PROGOBJS):
+	$(CXX) $(CFLAGS) -c $<
+
+.PHONY: $(SUBDIRS) all clean dist-clean strip

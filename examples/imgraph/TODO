@@ -1,0 +1,36 @@
+* update to gtkmm1.3
+
+* overhaul program, since this is really just a prototype
+
+* make a text-based alternative to the gui
+
+* box outlines should not be included in the .ps file, or they should be
+  listed after everything else so they can be easily removed.
+
+* make it possible to draw multiple functions on one graph
+
+* add a button to interrupt current graph
+
+* create main class for manager window, create class for plot windows
+  - each plot window will call the affine program, and will call
+    ghostscript on the output of that program.
+
+* use affine info to split boxes intelligently. ie first find bounds,
+  then split that parallelogram along short axis.
+
+* Translate output to origin, to preserve full precision (but makes
+  extraction of data points annoying).
+
+* add an undo button to revert to the previous set of parameters
+
+* add a child checkbox to "maintain aspect ratio" that resizes the
+  window to fit both the aspect ratio and the given x-y domains.
+
+* MathML and/or TeX support would be nice :)
+
+* Enable drawing multiple functions on the same plot, with a given color
+  for each.
+
+* add an option to set the plot color.
+
+* add a progress meter

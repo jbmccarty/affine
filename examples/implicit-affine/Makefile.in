@@ -1,0 +1,27 @@
+PROGRAMS = expr implicit-affine
+PROGOBJS = $(addsuffix .o,$(PROGRAMS)) parser.o optimizer.o
+
+all: $(PROGRAMS) $(SUBDIRS)
+strip: all
+	strip -s -R .comment -R .note $(PROGRAMS)
+dist-clean: clean
+	@rm -f $(PROGRAMS) libstamp
+clean:
+	@rm -f $(PROGOBJS)
+
+%.d: @srcdir@/%.cpp
+	@set -e; $(CXX) -MM $(CFLAGS) $< 2> /dev/null | sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; [ -s $@ ] || rm -f $@
+
+-include $(PROGOBJS:.o=.d)
+
+expr: parser.o optimizer.o
+
+implicit-affine: parser.o optimizer.o
+
+$(PROGRAMS): %: %.o
+	$(CXX) $^ $(LDFLAGS) -laffine -o $@
+
+$(PROGOBJS):
+	$(CXX) $(CFLAGS) -DBOOST_DISABLE_THREADS -c $<
+
+.PHONY: all clean dist-clean strip

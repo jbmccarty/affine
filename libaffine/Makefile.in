@@ -1,0 +1,30 @@
+OBJS = affine.o interval.o @LIST_OBJ@
+MAJOR = 0
+MINOR = 2
+
+strip: libaffine.so
+	strip -s -R .comment -R .note libaffine.so
+dist-clean: clean
+	@rm -f libaffine.*
+clean:
+	@rm -f $(OBJS) *.d
+
+%.d: @srcdir@/%.cpp
+	@set -e; $(CXX) -MM $(CFLAGS) $< 2> /dev/null | sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; [ -s $@ ] || rm -f $@
+
+-include $(OBJS:.o=.d)
+
+libaffine.so: %: %.$(MAJOR).$(MINOR)
+	ln -sf $< $(basename $<)
+	ln -sf $(basename $<) $@
+
+libaffine.so.$(MAJOR).$(MINOR): $(OBJS)
+	$(CXX) $^ -o $@ -g -shared -Wl,-soname,$(basename $@)
+
+libaffine.a: $(OBJS)
+	ar rcs libaffine.a $^
+
+$(OBJS):
+	$(CXX) $(CFLAGS) -fpic -c $<
+
+.PHONY: all clean dist-clean

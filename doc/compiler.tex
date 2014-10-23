@@ -1,0 +1,99 @@
+\documentclass{article}
+\title{Expression compiler and evaluator design}
+\begin{document}
+\maketitle
+
+\section{Definitions}
+
+\begin{itemize}
+  \item An \emph{expression} is a collection of some mathematical calculations to be computed.
+
+  \item \emph{Compilation} (compile-time) is the process of converting a text expression to executable (probably tree-based) form.
+  This includes parsing and optimization.
+
+  \item An \emph{evaluation} (run-time) of a (sub)expression computes the value of the expression, taking its inputs into account.
+
+  \item A \emph{top-level evaluation} is one that evaluates the entire expression, not just a subexpression.
+
+  \item A \emph{variable} is an expression whose value may be modified by the client program between top-level evaluations.
+
+  \item Expressions are composed entirely of \emph{operations}, which are functions with some number of inputs, usually other operations.
+  Each operation is initially a node in the syntax tree.
+
+  \item The \emph{value} of an operation is the result of executing it.
+\end{itemize}
+
+\section{Parser}
+The parser should parse expressions into a syntax tree, including affine, rational, and real constants, affine variables, arithmetic, and functions.
+
+Each operation should be tagged with its properties (commutative, associative, (non-, semi-)deterministic, constant, etc.), as well as the properties it desires from its operands (for example \texttt{pow()} would like an integer or rational as its second argument, in that order), sort of a function prototype.
+
+There are several levels of determinism for an operation: let $f(X, n, e)$ be the operation evaluated with input $X$, during the $n^\mathrm{th}$ top-level evaluation, in system environment $e$.
+\begin{enumerate}
+  \item[D0] Non-deterministic (no guarantees): the operation could have a different value each and every time it is executed.
+  Probably not useful, and hence not worth supporting.
+  Example: \texttt{rand()}.
+
+  \item[D1] Semi-deterministic ($f(X, n, e_1) = f(X, n, e_2)$): given the same input, the operation returns the same value throughout any single top-level evaluation.
+  The operation's value could possible change between two top-level evaluations.
+  Example: variables.
+  
+  \item[D2] Deterministic ($f(X, n_1, e_1) = f(X, n_2, e_2)$): given the same inputs, the value of the operation will always be the same.
+  Example: \texttt{sin()}.
+  
+  \item[D3] Constant ($f(X_1, n_1, e_1) = f(X_2, n_2, e_2)$): the operation has no operands, and always has the same value.
+  Example: immediates such as 6.
+\end{enumerate}
+
+\subsection{Implementation}
+The parsing of expressions into a syntax tree is complete, but the tree does not yet have the necessary tags.
+
+\section{Optimizer}
+
+An expression should be reduced to its most efficient possible form.
+This could be executable, or another pass could take the optimizer's output and make an executable form.
+Haskell, Lisp, or ML is probably a superior language for the optimization stage.
+Integer and rational variables may as well not be permitted.
+
+\subsubsection{Algorithm}
+The optimization step should make several passes, performing transformations on the expression tree:
+\begin{enumerate}
+  \item Propagate determinism levels through operations, starting with terminal nodes:
+  \begin{itemize}
+    \item A non-constant operation with any non-deterministic operands becomes non-deterministic.
+    \item A deterministic operation with any semi-deterministic operands and no non-deterministic operands becomes semi-deterministic.
+    \item A deterministic operation with all constant operands becomes constant.
+  \end{itemize}
+  When finished, there should be no deterministic operations left.
+
+  \item Collapse and evaluate constant subexpressions.
+
+  \item Canonicalize the parse tree.
+  Equivalent expressions should have the same canonicalized form, e.g\@. $-x^3 + x^4 \to x^4 - x^3$.
+
+  \item Perform common subexpression elimination.
+  Non-deterministic operations may not be collected/eliminated.
+  Semi-deterministic and constant operations may be collected/eliminated.
+
+  \item Promote rationals and reals to Affine when their parent
+  operators don't have a preference.
+
+  \item Fold remaining rationals and reals (which must all be constants
+  at this point) into their parent operators.
+
+  \item Insert copiers in front of constant destination operands and destination operands used by more than one operation; utilize commutative properties to prevent making copies when possible.
+  For non-constant operands, keep a list of which operations want to modify it.
+
+  \item For every non-constant operand with a copier above it, give its last modifier direct access.
+
+  \item Make a linear list of all operations to be executed, in order.
+  Operations already in the list may be omitted.
+\end{enumerate}
+
+\section{Evaluation}
+The evaluator uses the list of executable operations and processes them in order.
+Most operations modify one of their operands, hence the need for copiers.
+First it tells each element in the list to reset itself, then it tells each element to evaluate itself, in order.
+The value of the last element is returned.
+
+\end{document}

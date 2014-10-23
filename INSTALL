@@ -1,0 +1,13 @@
+If you downloaded this from version control, run ./bootstrap before
+following the rest of the instructions, in order to generate the build
+system.
+
+Run the commands
+  cd '=build'
+  ./configure
+  make
+  make install
+
+Run `./configure --help' to see the available options. There is not yet
+an install target. Don't forget to export LD_LIBARY_PATH=`pwd`/libaffine
+You need GCC version 3.0 or greater.

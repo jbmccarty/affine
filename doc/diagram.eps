@@ -1,0 +1,129 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 8 8 264 214
+%%Creator: Jason McCarty
+%%CreationDate: Sat Sep 28 16:48:25 EDT 2002
+%%Title: Affine Arithmetic Diagram
+%%EndComments
+
+72 254 div dup scale %make each unit 0.1mm
+2 setlinewidth
+/Times-Roman findfont
+42 scalefont setfont %12 point font
+
+/dashline {[10] 0 setdash} bind def
+/solidline {[] 0 setdash} bind def
+
+newpath %clip
+30 30 moveto
+900 0 rlineto
+0 725 rlineto
+-900 0 rlineto
+closepath clip
+
+newpath %x axis
+65 107 moveto
+-35 -7 rlineto
+35 -7 rlineto
+closepath fill
+newpath
+65 100 moveto
+865 100 lineto
+stroke
+newpath
+865 93 moveto
+35 7 rlineto
+-35 7 rlineto
+closepath
+fill
+910 90 moveto (x) show
+
+newpath %y axis
+93 65 moveto
+7 -35 rlineto
+7 35 rlineto
+closepath fill
+newpath
+100 65 moveto
+100 665 lineto
+stroke
+newpath
+93 665 moveto
+7 35 rlineto
+7 -35 rlineto
+closepath
+fill
+70 720 moveto (f\(x\)) show
+
+newpath %f(x)
+0 450 moveto
+270 180  700 200  1000 800  curveto
+stroke
+850 680 moveto (f\(x\)) show
+
+newpath % a
+200 317 7 0 360 arc
+closepath fill
+170 340 moveto (f\(a\)) show
+dashline
+newpath
+200 100 moveto
+0 217 rlineto
+stroke
+solidline
+190 60 moveto (a) show
+
+newpath % b
+800 500 7 0 360 arc
+closepath fill
+730 510 moveto (f\(b\)) show
+dashline
+newpath
+800 100 moveto
+0 400 rlineto
+stroke
+solidline
+790 60 moveto (b) show
+
+1 0 0 setrgbcolor %affine parallelogram
+newpath
+200 317 moveto
+0 -106 rlineto
+600 183 rlineto
+0 106 rlineto
+closepath stroke
+
+0 setgray %parallelogram intersection point
+newpath
+510 305 7 0 360 arc
+closepath fill
+520 270 moveto (f\(u\)) show
+dashline
+newpath
+510 100 moveto
+0 205 rlineto
+stroke
+solidline
+500 60 moveto (u) show
+
+0 0 1 setrgbcolor %affine line
+newpath
+100 233.5 moveto
+700 213.5 rlineto
+stroke
+0 setgray
+newpath
+100 233.5 7 0 360 arc
+closepath fill
+60 223 moveto (B) show
+
+newpath %halfheight
+810 447 moveto
+20 0 rlineto
+-10 0 rmoveto
+0 53 rlineto
+-10 0 rmoveto
+20 0 rlineto
+stroke
+840 462 moveto (y) show
+
+%%EOF

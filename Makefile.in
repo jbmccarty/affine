@@ -1,0 +1,47 @@
+CXX := @CXX@
+LIBPATH := @abs_top_builddir@/libaffine
+INCLUDES := -I@abs_top_srcdir@/include -I@abs_top_builddir@/include
+CFLAGS := -Wall -ansi @FLOAT_STORE@ -DHAVE_CONFIG_H $(INCLUDES) $(EXTRAFLAGS)
+LDFLAGS := -L$(LIBPATH)
+
+all fast debug profile: examples tests
+all: CFLAGS += -O3 $(ARCHFLAGS)
+all: LIBTARGET := strip
+all: EXTARGET := strip
+fast: CFLAGS := -O3 $(subst -ffloat-store,,$(CFLAGS)) -ffast-math
+fast: LDFLAGS += -ffast-math
+fast: LIBTARGET := strip
+fast: EXTARGET := strip
+debug: CFLAGS += -g -DDEBUG -O0
+debug: LIBTARGET := libaffine.so
+profile: CFLAGS += -g -pg -O3# -finline-limit=0
+profile: LDFLAGS += -pg -static
+profile: LIBTARGET := libaffine.a
+
+examples: libaffine examples/libstamp
+	make -C examples CXX:='$(CXX)' CFLAGS:='$(CFLAGS)' LDFLAGS:='$(LDFLAGS)' $(EXTARGET)
+
+tests: libaffine tests/libstamp
+	make -C tests CXX:='$(CXX)' CFLAGS:='$(CFLAGS)' LDFLAGS:='$(LDFLAGS)'
+
+libaffine:
+	make -C libaffine CXX:='$(CXX)' CFLAGS:='$(CFLAGS)' $(LIBTARGET)
+
+examples/libstamp: include/affine/*.h
+	@touch examples/libstamp
+
+tests/libstamp: include/affine/*.h
+	@touch tests/libstamp
+
+dist-clean: clean
+	@make -C libaffine dist-clean
+	@make -C examples dist-clean
+	@make -C tests dist-clean
+	@rm -rf configure config.* install-sh Makefile autom4te.cache \
+		include/config.h* include/replace.h include/affine/config.h
+clean:
+	@make -C libaffine clean
+	@make -C examples clean
+	@make -C tests clean
+
+.PHONY: all fast debug profile examples tests libaffine clean dist-clean

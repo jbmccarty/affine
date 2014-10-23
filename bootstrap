@@ -1,0 +1,11 @@
+#! /bin/sh
+
+rm -rf '=build'
+mkdir -p '=build/include'
+ln configure.ac '=build/'
+cd '=build'
+autoconf
+autoheader
+ln -sf /usr/share/misc/config.guess /usr/share/misc/config.sub ./
+touch install-sh
+export LD_LIBRARY_PATH=`pwd`/libaffine

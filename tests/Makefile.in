@@ -1,0 +1,21 @@
+TESTS = stupid speed powers
+TESTOBJS = $(addsuffix .o,$(TESTS))
+
+all: $(TESTS)
+dist-clean: clean
+	@rm -f $(TESTS) libstamp
+clean:
+	@rm -f $(TESTOBJS)
+
+%.d: @srcdir@/%.cpp
+	@set -e; $(CXX) -MM $(CFLAGS) $< 2> /dev/null | sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; [ -s $@ ] || rm -f $@
+
+-include $(TESTOBJS:.o=.d)
+
+$(TESTS): %: %.o libstamp
+	$(CXX) $< $(LDFLAGS) -laffine -o $@
+
+$(TESTOBJS):
+	$(CXX) $(CFLAGS) -c $<
+
+.PHONY: all clean dist-clean strip

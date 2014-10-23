@@ -1,0 +1,20 @@
+* Left-click recenters graph
+
+* Left-drag zooms boxed area
+
+* Middle-click clones entire graph
+
+* Middle-drag clones boxed area as new graph
+
+* Right-click menu contains:
+  - New
+  - Open..
+  - Save (same as save as if not already saved)
+  - Save As..
+  - Display Options (popup window. unminimize/select if already open)
+  - Help
+  - Close
+  ------ hline
+  - Quit
+
+* Right-drag unzooms boxed area?

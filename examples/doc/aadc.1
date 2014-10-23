@@ -1,0 +1,305 @@
+.\" aadc.1 - modified from dc.1 by Jason McCarty on 2002-05-16
+.\" --begin original dc.1 copyright
+.\"
+.\" dc.1 - the *roff document processor source for the dc manual
+.\"
+.\" This file is part of GNU dc.
+.\" Copyright (C) 1994, 1997, 1998, 2000 Free Software Foundation, Inc.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License , or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to:
+.\"   The Free Software Foundation, Inc.
+.\"   59 Temple Place, Suite 330
+.\"   Boston, MA 02111 USA
+.\"
+.\" --end original dc.1 copyright
+.TH AADC 1 "2002-05-27" "Jason McCarty"
+.ds dc \fIaadc\fP
+.ds Dc \fIAadc\fP
+.ds st \fISelf-Validated Numerical Methods and Applications\fP
+
+.SH NAME
+aadc \- a dc-like Affine Arithmetic calculator
+
+.SH SYNOPSIS
+aadc \" [-V] [--version] [-h] [--help]
+.\"   [-e scriptexpression] [--expression=scriptexpression]
+.\"   [-f scriptfile] [--file=scriptfile]
+.\"   [file ...]
+
+.SH DESCRIPTION
+\*(Dc is a reverse-polish calculator implementing Affine Arithmetic
+as described in \*(st (available from
+\fIhttp://www.dcc.unicamp.br/~stolfi/EXPORT/projects/affine-arith/\fP
+as of this writing). \*(Dc is a limited work-alike of the standard UNIX
+program \fBdc\fP(1).
+
+Numbers can be entered in standard decimal and scientific notation, with the
+exception that negative numbers must use ``_'' (underscore) instead of
+``-'' (hyphen) in front of the number.
+
+An affine form is entered as ``<\fIcenter\fP, \fIradius\fP>,'' which creates
+a new affine form centered at \fIcenter\fP, with radius \fIradius\fP.
+
+Arguments and commands must be seperated by whitespace, since unlike \fIdc\fP,
+\*(dc has multi-character commands.
+
+.ig
+.SH OPTIONS
+\*(Dc may be invoked with the following command-line options:
+.TP
+.B -V
+.TP
+.B --version
+Print out the version of \*(dc that is being run and a copyright notice,
+then exit.
+..
+.ig
+.TP
+.B -h
+.TP
+.B --help
+Print a usage message briefly summarizing these command-line options
+and the bug-reporting address,
+then exit.
+.TP
+.B -e \fIscript\fP
+.TP
+.BI --expression= script
+Add the commands in
+.I script
+to the set of commands to be run while processing the input.
+.TP
+.B -f \fIscript-file\fP
+.TP
+.BI --file= script-file
+Add the commands contained in the file
+.I script-file
+to the set of commands to be run while processing the input.
+.PP
+If any command-line parameters remain after processing the above,
+these parameters are interpreted as the names of input files to
+be processed.
+A file name of
+.B -
+refers to the standard input stream.
+The standard input will processed if no file names are specified.
+.PD
+..
+
+.SH COMMANDS
+.SS
+Printing Commands
+.TP
+.B p
+Prints the value on the top of the stack,
+without altering the stack.
+.TP
+.B f
+Prints the entire contents of the stack
+.ig
+and the contents of all of the registers,
+..
+without altering anything.
+This is a good command to use if you are lost or want
+to figure out what the effect of some command has been.
+.TP
+.B k
+Pops the top value on the stack, and sets the display precision (number of
+digits printed) to be the lower bound of the value popped, rounded to an
+integer.
+Note that this command does not affect \*(dc's internal accuracy, only the way
+numbers are printed.
+.TP
+.B terse
+Don't show deviations when printing output.
+.TP
+.B verbose
+Show deviations when printing output (the default setting).
+.PD
+.SS
+Arithmetic
+.TP
+.B +
+Pops two values off the stack, adds them,
+and pushes the result.
+.TP
+.B -
+Pops two values,
+subtracts the first one popped from the second one popped,
+and pushes the result.
+.TP
+.B *
+Pops two values, multiplies them, and pushes the result.
+.TP
+.B /
+Pops two values,
+divides the second one popped from the first one popped,
+and pushes the result.
+.TP
+.B ^
+Pops two values and exponentiates,
+using the first value popped as the exponent
+and the second popped as the base.
+
+.SS "Additional Mathematical Functions"
+.ds pp Pops one value, computes
+.ds pu and pushes the result.
+.TP
+.B abs
+\*(pp its absolute value, \*(pu
+.TP
+.B cos
+\*(pp its cosine, \*(pu
+.TP
+.B exp
+\*(pp \fIe\fP taken to that power, \*(pu
+.TP
+.B log
+\*(pp its natural logarithm, \*(pu
+.TP
+.B rand
+\*(pp a random number within its range, \*(pu
+.TP
+.B sin
+\*(pp its sine, \*(pu
+.TP
+.B sincos
+\*(pp its sine and cosine, and pushes them, in that order. \fBsincos\fP
+is faster than ``d sin r cos'', so it is useful when both the sine and
+cosine of the same value are desired. Furthermore, the values returned
+will be correlated by a trigonometric identity, which will improve
+accuracy in some calculations.
+.TP
+.B sqr
+\*(pp its square, \*(pu
+This is faster and more accurate than ``d *'' or ``2 ^'' since \*(dc knows
+exactly what operation is desired.
+.TP
+.B sqrt
+\*(pp its square root, \*(pu
+.TP
+.B tan
+\*(pp its tangent, \*(pu
+.TP
+.B v
+Alias for \fBsqrt\fP.
+
+.SS Stack Control
+.TP
+.B c
+Clears the stack, rendering it empty. This does not affect named variables.
+.TP
+.B d
+Duplicates the value on the top of the stack and pushes another copy of it.
+.TP
+.B pop
+Pops the value on the top of the stack, and discards it.
+.TP
+.B r
+Reverses the order of (swaps) the top two values on the stack.
+
+.SS "Affine Arithmetic Utility Operations"
+.TP
+.B affine
+Pops the top two values off the stack, creates a new affine form centered at
+the lower bound of the second value popped, with radius equal to the lower
+bound of the first value popped, then pushes that form. Thus, ``1 2 affine''
+has the same effect as ``<1, 2>''.
+.TP
+.B collapse
+The value on top of the stack is ``collapsed.'' This means that all the
+deviations in this value but not present in any other value are merged into a
+single deviation. This can improve speed and memory usage, and reduce the
+amount of output when it is printed.
+
+.SS Variables
+Instead of single-letter registers, \*(dc has named variables. A variable
+name can be any string, so long as it doesn't contain any whitespace
+characters. You could remember the function of \fB$\fP and \fB!\fP by
+thinking of them as \fBs\fP and \fBl\fP from \fIdc\fP, respectively.
+.TP
+\fB$\fP\fIfoo\fP
+Pops one value from the stack and stores it in the named variable \fIfoo\fP.
+.TP
+\fB!\fP\fIfoo\fP
+Pushes the value of \fIfoo\fP onto the stack, without modifying \fIfoo\fP.
+.TP
+\fB#\fP\fIfoo\fP
+Removes \fIfoo\fP from the symbol table; it is no longer recognized as a
+variable. A good mnemonic for this is that you ``pound foo'' to delete it.
+
+.SS Miscellaneous
+.TP
+.B q
+Quit \*(dc.
+.TP
+.B z
+Pushes the current stack depth:
+the number of objects on the stack before the execution of the
+.B z
+command.
+
+.SH EXAMPLES
+.\" FIXME: write more.
+The following line will determine the range of the function
+y = x / sin x, when x is in the range [4..5], and save the values
+of x and y for future use.
+.RS
+<4.5, 0.5> d d sin / p $y $x
+.RE
+
+.SH "SIGNIFICANT DIFFERENCES BETWEEN AADC AND DC"
+Because \*(dc allows multi-character commands, all commands and arguments must
+be seperated by whitespace.
+
+\*(Dc does not implement macros or string handling of any kind.
+
+\*(Dc has variables instead of registers, but unlike \fIdc\fP, \*(dc's
+variables are not stacks or arrays, just single values.
+
+\*(Dc does not allow you to set the precision or radixes. It uses
+double-precision floating point internally.
+
+The \fB!\fP operator in \*(dc does not execute system commands as in \fIdc\fP.
+It pushes a variable onto the stack instead.
+
+Other differences (mostly features in \fIdc\fP but not in \*(dc) can be
+determined by contrasting this manual page with \fBdc\fP(1).
+
+.SH "SEE ALSO"
+.BR dc (1)
+and \*(st, L. H. de Figueiredo and J. Stolfi
+
+.SH BUGS
+Many more functions need to be implemented and refined, especially trig
+functions.
+
+Using ``_'' for negative numbers has a quirk: typing ``_-5'', for example, will
+enter a positive five, since the input routines negate it twice.
+
+\*(Dc does not yet have a license.
+
+.SH AUTHOR
+.nf
+Jason McCarty <bclg@iup.edu>
+.fi
+
+.SH ACKNOWLEDGEMENTS
+Thanks are due to Jorge Stolfi and Luiz Henrique de Figueiredo for
+inventing/discovering Affine Arithmetic and distributing the details in
+writing. Thanks are also due to the Free Software Foundation for their
+implementation of \fIdc\fP, which introduced me to reverse-polish notation, and
+for the many other UNIX utilities written by them. The groff source of this
+manual page is based on \fIdc\fP's manual page, along with several other
+utilities' manuals.

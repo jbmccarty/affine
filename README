@@ -1,0 +1,7 @@
+  include/: exported libaffine header files
+libaffine/: libaffine source files
+    tests/: correctness/regression tests
+ examples/: example programs that use libaffine
+      doc/: documentation
+
+We don't try very hard on intervals containing an inflection point, but it doesn't matter much anyway.

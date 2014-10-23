@@ -1,0 +1,47 @@
+#!/bin/bash
+# benchmark various ./configure settings
+# note that this script takes 90 minutes to run on a 1.33 GHz Athlon
+
+OUT=benchmark.out
+export LD_LIBRARY_PATH=`pwd`/libaffine
+
+echo "#test started $(date)." > $OUT
+listtype=palist
+#for listtype in palist stdlist; do
+  for realtype in float double 'long double'; do
+    for rounding in disable enable; do
+      ./bootstrap --with-real-type="$realtype" --$rounding-rounding --with-devlist=$listtype
+      make
+      echo "#list type: $listtype; size: $realtype; rounding: $rounding" >> $OUT
+      for i in 1 2 4 8 16 32 64; do
+        echo 10000000 $i | ./tests/speed \
+          | sed "s/[^0-9.]*\([0-9.]*\)[^0-9.]*/$i \1/" >> $OUT
+      done
+      echo -e "\n" >> $OUT
+      make dist-clean
+    done
+  done
+#done
+echo "#test ended $(date)."
+
+gnuplot << _EOF
+set terminal postscript color
+set output "benchmark.ps"
+set data style linespoints
+plot \
+     "benchmark.out" index  0 title "palist,float,noround",\
+     "benchmark.out" index  1 title "palist,float,round",\
+     "benchmark.out" index  2 title "palist,double,noround",\
+     "benchmark.out" index  3 title "palist,double,round",\
+     "benchmark.out" index  4 title "palist,long double,noround",\
+     "benchmark.out" index  5 title "palist,long double,round"
+#     "benchmark.out" index  6 title "stdlist,float,noround",\
+#     "benchmark.out" index  7 title "stdlist,float,round",\
+#     "benchmark.out" index  8 title "stdlist,double,noround",\
+#     "benchmark.out" index  9 title "stdlist,double,round",\
+#     "benchmark.out" index 10 title "stdlist,long double,noround",\
+#     "benchmark.out" index 11 title "stdlist,long double,round"
+_EOF
+#     "benchmark.out" index 0 using 1:(1 / \$2) title "scalar float"
+#     "benchmark.out" index 1 using 1:(1 / $2) title "scalar double",\
+#     "benchmark.out" index 2 using 1:(1 / $2) title "scalar long double",\

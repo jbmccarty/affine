@@ -1,0 +1,21 @@
+#ifndef _AFFINE_CONFIG_H
+#define _AFFINE_CONFIG_H
+
+@USE_ROUNDING_VAL@
+
+#define REAL_TYPE_FLOAT 1
+#define REAL_TYPE_DOUBLE 2
+#define REAL_TYPE_L_DOUBLE 3
+#define REAL_TYPE @REAL_TYPE@
+
+typedef
+#if REAL_TYPE == REAL_TYPE_FLOAT
+  float
+#elif REAL_TYPE == REAL_TYPE_DOUBLE
+  double
+#elif REAL_TYPE == REAL_TYPE_L_DOUBLE
+  long double
+#endif
+Real;
+
+#endif // _AFFINE_CONFIG_H

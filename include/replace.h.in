@@ -1,0 +1,28 @@
+#ifndef _REPLACE_H
+#define _REPLACE_H
+
+#include <affine/config.h>
+#include <cmath>
+
+inline void mysincos(Real a, Real* b, Real* c) {
+#ifdef USE_SINCOS
+  ::sincos@REAL_SUFFIX@(a, b, c);
+#else
+  if (b) *b = std::sin(a);
+  if (c) *c = std::cos(a);
+#endif
+}
+
+namespace std {
+  inline Real copysign (Real a, Real b)
+  {
+#ifdef USE_COPYSIGN
+    return ::copysign@REAL_SUFFIX@(a, b);
+#else
+    if (b < 0.0) return -std::fabs(a);
+    else return std::fabs(a);
+#endif
+  }
+}
+
+#endif
